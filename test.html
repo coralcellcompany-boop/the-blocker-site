@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Blocker — Blocking test</title>
+<style>
+body{font:17px/1.5 -apple-system,system-ui,sans-serif;max-width:560px;margin:0 auto;padding:48px 20px;color:#134E4A;text-align:center}
+.icon{font-size:72px;line-height:1;margin-bottom:12px}h1{margin:0 0 8px;font-size:28px}p{color:#3f6360;margin:0 0 12px}
+.on h1{color:#0D9488}.off h1{color:#C2410C}.unknown h1{color:#6B7280}ol{text-align:left;color:#3f6360}
+</style></head>
+<body>
+<div id="result" class="unknown"><div class="icon">⏳</div><h1>Checking…</h1><p>Testing whether Safari is using The Blocker.</p></div>
+<script>
+// The Blocker always blocks probe.js. control.js is never blocked: it proves we
+// are online, so a failed probe means "blocked", not "no internet".
+function load(src){return new Promise(function(ok){var s=document.createElement('script');
+  s.src=src+'?t='+Date.now();s.onload=function(){ok(true)};s.onerror=function(){ok(false)};document.head.appendChild(s);});}
+function show(cls,icon,title,body){var r=document.getElementById('result');r.className=cls;
+  r.innerHTML='<div class="icon">'+icon+'</div><h1>'+title+'</h1>'+body;}
+Promise.all([load('control.js'),load('probe.js')]).then(function(v){
+  if(!v[0]) show('unknown','📶','Can’t check right now','<p>You seem to be offline. Connect to the internet and try again.</p>');
+  else if(!v[1]) show('on','✅','Blocking is ON','<p>Safari is using The Blocker. You’re protected.</p>');
+  else show('off','⚠️','Blocking is OFF','<p>Safari is not using The Blocker yet.</p><ol><li>Open Settings ▸ Apps ▸ Safari ▸ Extensions.</li><li>Tap <strong>The Blocker</strong>, then turn on <strong>Allow Extension</strong>.</li><li>Come back and run the test again.</li></ol>');
+});
+</script>
+</body></html>
